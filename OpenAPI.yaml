@@ -1,0 +1,544 @@
+openapi: 3.0.2
+info: 
+  title: "iTHRIV Data Commons Project Managment Service"
+  description: "Manages metadata and permissions for iTHRIV Data Commons Projects"
+  termsOfService: "http://example.org"
+  license: 
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+  version: 0.1.0
+  contact:
+      name: "Max Levinson"
+      email: "mal8ch@virginia.edu"
+servers:
+  - url: "http://example.org"
+    description: "Test Deployment"
+paths:
+
+  /project:
+    post:
+      summary: Creating a New Project 
+      operationId: createProject
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/project"
+              required:
+                - piId
+                - projectTitle
+                - projectSummary
+                - homeInstitution
+      responses:
+        '201':
+          description: Successfully created a new Project
+          content:
+            "application/json":
+              $ref: "#/components/responses/createdProject"
+        '401':
+          description: User lacks authN/authZ to create a project
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+
+  /project/{projectId}:
+    parameters:
+      - name: projectId
+        in: path
+        schema:
+          type: string
+    get:
+      summary: Returns the Full Project Metadata
+      operationId: getProject
+      responses:
+        '200':
+          description: Successfully returned Project object for corresponding ID
+          content:
+            'application/json':
+                $ref: "#/components/schemas/project"
+        '401':
+          description: User lacks authN/authZ to view this project
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404': 
+          description: Project Resource not Found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notFound"
+    put:
+      summary: Update Project Metdata
+      operationId: updateProject
+      requestBody:
+        content:
+          "application/json": 
+            $ref: "#/components/schemas/project"
+      responses:
+        '200':
+          description: Successfully Updated Project 
+          content:
+            "application/json":
+              $ref: "#/components/responses/updateSuccess"
+        '401':
+          description: User lacks authorization to update this Project
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404': 
+          description: Project not Found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notFound"
+    delete:
+      summary: Delete a Project Object
+      operationId: deleteProject
+      parameters:
+        - name: projectId
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully Deleted Document
+          content:
+            "application/json":
+              $ref: "#/components/responses/deleteSuccess"
+        '401':
+          description: User lacks authorization to Delete this Project
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404': 
+          description: Project not Found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notFound"
+
+  /project/{projectId}/irb:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Add an IRB document to a Project Resource
+      requestBody:
+        content:
+          "application/json": 
+            $ref: "#/components/schemas/irb"
+      responses:
+        '201':
+          description: Successfully Uploaded A Contract Document to a Project
+          content:
+            $ref: "#/components/responses/addedIRB"
+        '401':
+          description: User is unauthorized to add a Contract Document to this Project
+          content:
+            $ref: "#/components/responses/unauthorized"
+        '404':
+          description: No Project Resource exists
+          content:
+            $ref: "#/components/responses/notFound"
+
+  /project/{projectId}/irb/{irbId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: irbId
+        in: path
+        required: true
+        schema:
+          type: string    
+    get:
+      description: Return Metadata for an IRB approval document
+      responses:
+        '200':
+          description: Successfully returned IRB aproval metadata
+          content:
+            "application/json":
+              $ref: "#/components/schemas/irb"
+        '401':
+          description: User lacks authorization to retrieve this IRB resource
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404':
+          description: IRB resource not found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notFound"
+          description: User lacks authN/authZ to view this IRB approval document    
+    put:
+      description: Update an IRB document to a Project Resource
+      requestBody:
+        content:
+          "application/json":
+            $ref: "#/components/schemas/irb"
+      responses:
+        '200':
+          description: Successfully Updated IRB Resource for a Project
+          content:
+            "application/json":
+              $ref: "#/components/schemas/irb"
+        '401':
+          description: user lacks authorization to update this irb resource
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404':
+          description: irb resource not found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notfound"
+    delete:
+      description: Delete an IRB document from a Project Resource
+      responses:
+        '200':
+          description: Successfully deleted IRB document
+        '401':
+          description: User lacks authorization to delete this IRB resource
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404':
+          description: IRB resource not found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notfound"
+
+  
+  /project/{projectId}/contract:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string 
+    post:
+      description: Add a Contract Document to a Project Resource
+      responses:
+        '201':
+          description: Successfully Posted a Contract Document
+          content:
+            "application/json":
+              $ref: "#/components/responses/createResource"
+        '401':
+          description: User lacks authN/authZ to post a contract document for this Project
+          content:
+            "application/json":
+              $ref: "#/components/responses/unauthorized"
+        '404':
+          description: Project not Found
+          content:
+            "application/json":
+              $ref: "#/components/responses/notFound"
+
+  /project/{projectId}/contract/{contractId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      description: Return Contract Document Metadata
+      responses:
+        "200": 
+          description: Successfully Returned Contract Metadata
+          content:
+            "application/json":
+              $ref: "#/components/schemas/contract"
+    put:
+      description: Update Contract Document Metadata
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/contract"
+      responses:
+        "201":
+          description: Successfully Updated Contract Metadata
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/responses/updateSuccess"
+    delete:
+      description: Delete Contract Document
+      responses:
+        "201":
+          description: Successfully Deleted Contract Document
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/responses/deleteSuccess"
+
+  /project/{projectId}/collaborators:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      description: Add Collaborators for a Project
+      requestBody:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              projectId:
+                type: string
+              collaborators:
+                type: array
+                items:
+                  $ref: "#/components/schemas/user"
+      content:
+        "application/json":
+    get:
+      description: List Collaborators for a Project
+      responses:
+        '200':
+          description: Successfully Returned List of Collaborators
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: string
+                  collaborators:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/user"
+
+
+  /project/{projectId}/collaborators/{collaboratorId}:
+    parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: collaboratorId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      description: Get Metadata for a Single Collaborator 
+      responses:
+        "200":
+          description: Succesfully returned Collaborator Metadata
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/user"        
+    put:
+      description: Update a single Collaborator and their permissions on a project
+      requestBody:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/user"
+      responses:
+        "201":
+          description: Successfully Updated Collaborator
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/responses/updateSuccess"
+    delete:
+      description: Delete a Collaborator from a Project
+        "200":
+          description: Successfully Deleted Collaborator from Project
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/responses/deleteSuccess"
+
+components:
+  schemas:
+    project:
+      type: object
+      properties:
+        piId:
+          description: ORCID identifier for the principle investigator
+          type: string
+          pattern: ^orcid:[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$
+        projectId:
+          description: Project Identifier assigned by the Object Registration Service
+          type: string
+          pattern: ^ithriv:[a-zA-Z0-9]{4,}$
+        projectTitle:
+          description: Title for the Project
+          type: string
+        projectSummary:
+          description: Summary for the Project, including methods and goals
+          type: string
+        homeInstitution:
+          description: The Institution responsible for managing Project
+          artifacts (software, data, deployments)
+          type: string 
+          enum:
+            - "University of Virginia"
+            - "Virginia Tech"
+            - "Inova Health Systems"
+    user:
+      type: object
+      properties:
+        id:
+          description: ORCID identifier for the user
+          type: string
+          pattern: ^orcid:[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$
+        homeInstitution:
+          type: string
+          enum:
+            - "University of Virginia"
+            - "Virginia Tech"
+            - "Inova Health Systems"
+        givenName:
+          type: string
+        familyName:
+          type: string
+        email:
+          type: string
+        permissions:
+          type: array
+          items: 
+            type: string
+    irb:
+      properties:
+        projectId:
+          type: string
+          pattern: ^ithriv:[a-zA-Z0-9]{4,}$
+        irbId:
+          description: Identifier for the IRB Document
+          type: string
+        approvalType:
+          type: string
+          enum:
+            - "Letter of Exempt Determination"
+            - "Study Approval"
+        team:
+          type: array
+          items: 
+            $ref: "#/components/schemas/user"
+        securityLevel:
+          type: string
+        url:
+          description: URL which returns the PDF Document for the IRB approval
+          type: string
+    contract:
+      type: object
+      properties:
+        projectId:
+          type: string
+          pattern: ^ithriv:[a-zA-Z0-9]{4,}$
+        contractId:
+          type: string
+          pattern: ^ithriv:[a-zA-Z0-9]{4,}$
+        teamMembers:
+          type: array
+          items:
+            $ref: "#/components/schemas/user"
+        permissions:
+          description: List of Policies that entitles the users in teamMembers to specified Data Commons Resources
+          type: array
+          items:
+            type: string
+        url:
+          description: URL that returns the PDF Contract Document
+          type: string
+  responses:
+    unauthorized:
+      description: Response when a User lacks the permissions required for an API call
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              request:
+                type: object
+                properties:
+                  requiredPermissions:
+                    description: Missing Policies on User required to complete an Action
+                    type: array
+                    items: string
+                  resource:
+                    description: The Resource Endpoint invoked in the API call
+                    type: string 
+                  method:
+                    type: string
+    notFound:
+      description: Response when a User makes an API call on a resource that doesn't exist
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              resource:
+                description: The Resource Endpoint invoked in the API call
+                type: string
+              method:
+                type: string 
+    createSuccess:
+      description: Response when a User successfully creates a Resource
+      content:
+        "application/json":
+            schema:
+              type: object
+              properties:
+                resource:
+                  description: URI for the created Resource 
+                  type: string
+    deleteSuccess:  
+      description: 
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              resource:
+                description: URI for the created Resource 
+                type: string
+  parameters:
+  examples:
+  requestBodies:
+  headers:
+  securitySchemes:
+    - name: Comanage
+      type: Oauth
+      description: Oauth Token provided from the UVA Data Commons Comanage server, also used to send SAML Permissions
+      in: header
+      scheme: bearer
+      flows:
+        - implicit:
+          authorizationUrl: http://example.com/oauth/
+          scopes:
+            createProject: Create New Projects
+            updateProject: Owner may update A Project's Metadata
+            readProject: Owner may read Project Metdata
+            deleteProject: Owner may delete a Project and associated resources
+            
+            createIRB: Associate a new IRB document with a project
+            updateIRB: Owner may update an IRB resource for Projects 
+            readIRB: Owner may read IRB Metdata
+            deleteIRB: Owner of Project may delete an associated IRB object
+          
+            createContract: Associate a new Contract  with a project
+            updateContract: Owner may update an Contract resource for Projects 
+            readContract: Owner may read Contract Metdata
+            deleteContract: Owner of Project may delete an associated Contract
+
+            createCollaborator: Associate a collaborator with a project and assign permissions
+            updateCollaborator: Project Owner may update an Collaborator permissions
+            readCollaborator: May read Contract Metdata
+            deleteCollaborator: Project Owner may delete an Collaborator from the Project
+  links:
+  callbacks:
+security:
+tags:
+externalDocs:
