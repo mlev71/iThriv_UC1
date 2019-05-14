@@ -16,6 +16,8 @@ servers:
 paths:
   /project:
     post:
+      security:
+        - Project_Admin
       tags:
         - Project
       operationId: createProject
@@ -531,7 +533,7 @@ components:
                   requiredPermissions:
                     description: Missing Policies on User required to complete an Action
                     type: array
-                    items: 
+                    items:
                       type: string
                   resource:
                     description: The Resource Endpoint invoked in the API call
