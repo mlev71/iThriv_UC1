@@ -47,6 +47,8 @@ paths:
         schema:
           type: string
     get:
+      security:
+        - Project_Admin
       tags:
         - Project
       summary: Returns the Full Project Metadata
@@ -71,6 +73,8 @@ paths:
                 schema:
                   $ref: "#/components/responses/notFound"
     put:
+      security:
+        - Project_Admin
       tags:
         - Project
       summary: Update Project Metdata
@@ -100,6 +104,8 @@ paths:
               schema:
                 $ref: "#/components/responses/notFound"
     delete:
+      security:
+        - Project_Admin
       tags:
         - Project
       summary: Delete a Project Object
@@ -132,6 +138,8 @@ paths:
         schema:
           type: string
     post:
+      security:
+        - Project_Admin
       tags:
         - Project
       summary: Add an IRB document to a Project Resource
@@ -173,6 +181,8 @@ paths:
         schema:
           type: string
     get:
+      security:
+        - Project_Admin
       tags:
         - IRB
       description: Return Metadata for an IRB approval document
@@ -196,6 +206,8 @@ paths:
               schema:
                 $ref: "#/components/responses/notFound"
     put:
+      security:
+        - Project_Admin
       tags:
         - IRB
       description: Update an IRB document to a Project Resource
@@ -224,6 +236,8 @@ paths:
               schema:
                 $ref: "#/components/responses/notFound"
     delete:
+      security:
+        - Project_Admin
       tags:
         - IRB
       description: Delete an IRB document from a Project Resource
@@ -252,6 +266,8 @@ paths:
         schema:
           type: string
     post:
+      security:
+        - Project_Admin
       tags:
         - Contract
       description: Add a Contract Document to a Project Resource
@@ -288,6 +304,8 @@ paths:
         schema:
           type: string
     get:
+      security:
+        - Project_Admin
       tags:
         - Contract
       description: Return Contract Document Metadata
@@ -299,6 +317,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/contract"
     put:
+      security:
+        - Project_Admin
       tags:
         - Contract
       description: Update Contract Document Metadata
@@ -315,6 +335,8 @@ paths:
               schema:
                 $ref: "#/components/responses/updateSuccess"
     delete:
+      security:
+        - Project_Admin
       tags:
         - Contract
       description: Delete Contract Document
@@ -334,6 +356,8 @@ paths:
         schema:
           type: string
     post:
+      security:
+        - Project_Admin
       tags:
         - Collaborator
       description: Add Collaborators for a Project
@@ -357,6 +381,8 @@ paths:
               schema:
                 $ref: "#/components/responses/createSuccess"
     get:
+      security:
+        - Project_Admin
       tags:
         - Collaborator
       description: List Collaborators for a Project
@@ -389,6 +415,8 @@ paths:
         schema:
           type: string
     get:
+      security:
+        - Project_Admin
       tags:
         - Collaborator
       description: Get Metadata for a Single Collaborator
@@ -400,6 +428,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/user"
     put:
+      security:
+        - Project_Admin
       tags:
         - Collaborator
       description: Update a single Collaborator and their permissions on a project
@@ -416,6 +446,8 @@ paths:
               schema:
                 $ref: "#/components/responses/updateSuccess"
     delete:
+      security:
+        - Project_Admin
       tags:
         - Collaborator
       description: Delete a Collaborator from a Project
